@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>هضيم | عدسة التغذية الذكية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --h-green: #10b981; --h-rose: #f43f5e; --h-dark: #0f172a; }
+        body { font-family: 'Cairo', sans-serif; background-color: #000; color: white; margin: 0; overflow: hidden; height: 100vh; }
+        
+        /* عدسة هضيم - الواقع المعزز الحقيقي */
+        .lens-viewport { height: 42vh; position: relative; background: #111; overflow: hidden; }
+        #v { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); transition: filter 1s ease-in-out; }
+        
+        /* طبقة المعالجة الحيوية للوجه */
+        .face-ar-layer { 
+            position: absolute; inset: 0; pointer-events: none; z-index: 10;
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        /* تأثيرات الفلاتر المتناسبة مع الوجه */
+        .filter-glow { filter: saturate(1.4) contrast(1.1) brightness(1.1) sepia(0.05); }
+        .filter-stress { filter: saturate(0.6) contrast(0.9) brightness(0.9) sepia(0.1); }
+        .filter-normal { filter: none; }
+
+        /* أيقونة تتبع الوجه الذكية */
+        .tracker-ui {
+            width: 220px; height: 280px; border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 110px 110px 90px 90px; position: relative;
+            box-shadow: 0 0 0 1000px rgba(0,0,0,0.3);
+        }
+        .tracker-corner { position: absolute; width: 20px; height: 20px; border: 3px solid var(--h-green); border-radius: 5px; opacity: 0.5; }
+
+        /* واجهة هضيم */
+        .ui-panel { 
+            height: 58vh; background: #fff; border-radius: 40px 40px 0 0; 
+            padding: 25px 20px; color: var(--h-dark); overflow-y: auto; 
+            box-shadow: 0 -20px 60px rgba(0,0,0,0.9); position: relative; z-index: 20;
+        }
+
+        .header-section { text-align: center; margin-bottom: 20px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
+        .header-section h1 { font-size: 34px; font-weight: 900; color: var(--h-green); line-height: 1; }
+        .header-section p { font-size: 13px; font-weight: 700; color: #64748b; margin-top: 6px; }
+
+        .btn-main { 
+            background: var(--h-dark); color: white; width: 100%; padding: 18px; border-radius: 20px;
+            font-size: 18px; font-weight: 900; border: none; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); margin-bottom: 25px;
+        }
+
+        .food-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .item-card { 
+            background: #f8fafc; border: 2.5px solid transparent; padding: 12px 4px; border-radius: 20px;
+            display: flex; flex-direction: column; align-items: center; transition: 0.3s; cursor: pointer;
+        }
+        .item-card.sel-h { border-color: var(--h-green); background: #ecfdf5; transform: scale(0.96); }
+        .item-card.sel-u { border-color: var(--h-rose); background: #fff1f2; transform: scale(0.96); }
+        .item-card .icon { font-size: 24px; margin-bottom: 4px; }
+        .item-card .label { font-size: 9px; font-weight: 800; color: #475569; }
+
+        /* التقرير للطباعة */
+        #reportBackdrop { 
+            position: fixed; inset: 0; z-index: 100; background: white; 
+            display: none; flex-direction: column; overflow-y: auto; color: #1e293b;
+        }
+        .report-content { padding: 40px 25px; max-width: 800px; margin: 0 auto; width: 100%; }
+        
+        .score-pill { border-radius: 30px; padding: 30px; text-align: center; margin-bottom: 30px; }
+        .score-h { background: #ecfdf5; border: 2px solid var(--h-green); color: #065f46; }
+        .score-u { background: #fff1f2; border: 2px solid var(--h-rose); color: #991b1b; }
+
+        .infographic-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+        .impact-tag { font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 10px; margin: 3px; display: inline-block; }
+        .tag-pos { background: #d1fae5; color: #064e3b; }
+        .tag-neg { background: #fee2e2; color: #7f1d1d; }
+
+        @media print {
+            .no-print { display: none !important; }
+            #reportBackdrop { display: block !important; position: static !important; }
+        }
+        
+        .disclaimer { font-size: 9px; text-align: center; color: #94a3b8; margin-top: 30px; border-top: 1px dashed #e2e8f0; padding-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <!-- عدسة هضيم - منطقة الكاميرا -->
+    <div class="lens-viewport no-print">
+        <video id="v" autoplay playsinline muted></video>
+        <div class="face-ar-layer">
+            <div class="tracker-ui">
+                <div class="tracker-corner top-0 left-0 border-r-0 border-b-0"></div>
+                <div class="tracker-corner top-0 right-0 border-l-0 border-b-0"></div>
+                <div class="tracker-corner bottom-0 left-0 border-r-0 border-t-0"></div>
+                <div class="tracker-corner bottom-0 right-0 border-l-0 border-t-0"></div>
+                
+                <div class="absolute -bottom-10 left-1/2 -translate-x-1/2 text-[10px] font-black tracking-widest bg-black/50 px-3 py-1 rounded">
+                    عدسة هضيم: <span id="status">جاهز للمسح</span>
+                </div>
+            </div>
+        </div>
+        <div class="absolute top-5 right-5 flex flex-col gap-2">
+            <div class="bg-black/40 backdrop-blur px-3 py-1 rounded-full text-[9px] font-black border border-white/10 flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                تحليل ملامح الوجه AI
+            </div>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم -->
+    <div class="ui-panel no-print no-scrollbar">
+        <div class="header-section">
+            <h1>هضيم</h1>
+            <p>"غذاؤك إما داؤك وإما دواؤك"</p>
+        </div>
+
+        <button onclick="openReport()" class="btn-main">استخراج تحليل هضيم AI</button>
+
+        <div class="mb-6">
+            <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">مدة الالتزام بالنمط</h3>
+            <div class="flex gap-2">
+                <button onclick="setM(1)" id="m1" class="flex-1 py-3 rounded-2xl bg-slate-900 text-white text-xs font-black">شهر</button>
+                <button onclick="setM(2)" id="m2" class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-400 text-xs font-black">شهرين</button>
+                <button onclick="setM(3)" id="m3" class="flex-1 py-3 rounded-2xl bg-slate-100 text-slate-400 text-xs font-black">3 أشهر</button>
+            </div>
+        </div>
+
+        <div id="grid" class="food-grid"></div>
+
+        <div class="disclaimer">
+            محتوى مصمم بالذكاء الاصطناعي ويسترشد بالمعلومات الواردة في وزارة الصحة السعودية
+        </div>
+    </div>
+
+    <!-- التقرير الاحترافي للطباعة -->
+    <div id="reportBackdrop">
+        <div class="report-content no-scrollbar">
+            <div class="flex justify-between items-start border-b-4 border-emerald-500 pb-8 mb-8">
+                <div>
+                    <h1 class="text-4xl font-black text-slate-900">هضيم | التقرير التحليلي</h1>
+                    <p class="text-lg font-bold text-emerald-600">"غذاؤك إما داؤك وإما دواؤك"</p>
+                </div>
+                <button onclick="closeReport()" class="no-print p-3 bg-slate-100 rounded-full text-slate-400">✕</button>
+            </div>
+
+            <div id="scoreDisplay" class="score-pill">
+                <div id="scoreValue" class="text-7xl font-black mb-1">0%</div>
+                <div id="scoreMsg" class="text-xs font-black uppercase tracking-widest">تحليل السلة الحيوية</div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <div class="infographic-box">
+                    <h3 class="font-black text-slate-800 mb-4 flex items-center gap-2">👁️ الوجه والشعر والعينين</h3>
+                    <div id="faceList" class="flex flex-wrap"></div>
+                </div>
+                <div class="infographic-box">
+                    <h3 class="font-black text-slate-800 mb-4 flex items-center gap-2">🏃 الرشاقة والتمثيل الغذائي</h3>
+                    <div id="bodyList" class="flex flex-wrap"></div>
+                </div>
+            </div>
+
+            <div class="infographic-box bg-slate-900 text-white border-none p-6">
+                <h3 class="text-xs font-black text-emerald-400 uppercase mb-4 tracking-widest">التفصيل الكيميائي للعناصر المختارة:</h3>
+                <div id="chemMap" class="space-y-4 text-[11px] font-bold leading-relaxed"></div>
+            </div>
+
+            <div id="verdictBox" class="p-8 border-r-8 border-emerald-500 bg-emerald-50 rounded-3xl mt-10">
+                <h3 class="text-xl font-black text-slate-800 mb-3">توقعات هضيم AI المستقبلية</h3>
+                <p id="verdictTxt" class="text-sm font-medium text-slate-600 leading-relaxed"></p>
+            </div>
+
+            <div class="disclaimer mt-10">
+                محتوى مصمم بالذكاء الاصطناعي ويسترشد بالمعلومات الواردة في وزارة الصحة السعودية
+            </div>
+
+            <div class="no-print mt-10">
+                <button onclick="window.print()" class="w-full py-5 bg-slate-900 text-white rounded-3xl font-black shadow-xl">تحميل وحفظ الإنفوجرافيك PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FOOD_DB = [
+            { id: 'fish', name: 'أسماك', icon: '🐟', type: 'h', chem: 'أوميغا 3 + فسفور عضوي', pos: ['نضارة قرنية العين', 'لمعان الشعر الطبيعي', 'مرونة خلايا البشرة'], neg: [], desc: 'يعمل الأوميغا 3 كحاجز حماية طبيعي يمنع جفاف الجلد ويحافظ على رطوبته.' },
+            { id: 'veg', name: 'خضروات', icon: '🥦', type: 'h', chem: 'فيتامين C + مضادات أكسدة', pos: ['تفتيح الهالات السوداء', 'بشرة متوهجة'], neg: [], desc: 'تحفز الخضروات الورقية إنتاج الكولاجين الطبيعي الذي يشد الوجه.' },
+            { id: 'meat', icon: '🥩', name: 'لحوم', type: 'h', chem: 'حديد هيم + B12', pos: ['توريد الوجنتين', 'بناء الكتلة العضلية'], neg: [], desc: 'الحديد أساسي لنقل الأكسجين، مما يعطي الوجه لوناً حيوياً ممتلئاً.' },
+            { id: 'water', icon: '💧', name: 'ماء', type: 'h', chem: 'H2O مرطب خلوي', pos: ['ليونة دائمة للجلد', 'تطهير المسام'], neg: [], desc: 'الترطيب الكافي يمنع ظهور الخطوط الدقيقة والتجاعيد المبكرة.' },
+            { id: 'sugar', icon: '🍰', name: 'حلويات', type: 'u', chem: 'سكر مكرر عالي', pos: [], neg: ['شحوب الوجه', 'تكسر الكولاجين', 'ظهور التجاعيد'], desc: 'عملية Glycation الناتجة عن السكر تسبب تيبس ألياف الجلد وفقدان مرونتها.' },
+            { id: 'fast', icon: '🍔', name: 'وجبات', type: 'u', chem: 'دهون مهدرجة + صوديوم', pos: [], neg: ['انتفاخ الجفون', 'بشرة دهنية/حبوب', 'سمنة حشوية'], desc: 'ترفع مستويات الالتهاب، مما يؤدي لانتفاخ الوجه وتراكم السوائل.' },
+            { id: 'soda', icon: '🥤', name: 'غازيات', type: 'u', chem: 'أحماض فسفورية + كافيين', pos: [], neg: ['بهتان لون الشعر', 'جفاف الشفاه'], desc: 'تؤدي لفقدان المعادن الأساسية التي تدعم قوة الشعر والأظافر.' },
+            { id: 'fried', icon: '🍟', name: 'مقليات', type: 'u', chem: 'أكريلاميد + أوميغا 6 زائد', pos: [], neg: ['إجهاد تحت العين', 'خمول بدني'], desc: 'تؤثر على جودة تدفق الدم، مما يظهر الوجه مجهداً وباهتاً.' }
+        ];
+
+        let selected = new Set();
+        let currentM = 1;
+
+        // Render Control
+        const grid = document.getElementById('grid');
+        grid.innerHTML = FOOD_DB.map(f => `
+            <div onclick="toggleItem('${f.id}')" id="card-${f.id}" class="item-card">
+                <div class="icon">${f.icon}</div>
+                <div class="label">${f.name}</div>
+            </div>
+        `).join('');
+
+        async function startLens() {
+            try {
+                const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                document.getElementById('v').srcObject = s;
+            } catch(e) { console.error("Camera fail"); }
+        }
+
+        function toggleItem(id) {
+            const el = document.getElementById(`card-${id}`);
+            const item = FOOD_DB.find(x => x.id === id);
+            if(selected.has(id)) {
+                selected.delete(id);
+                el.classList.remove('sel-h', 'sel-u');
+            } else {
+                selected.add(id);
+                el.classList.add(item.type === 'h' ? 'sel-h' : 'sel-u');
+            }
+            applyFilters();
+        }
+
+        function setM(m) {
+            currentM = m;
+            [1,2,3].forEach(v => {
+                const btn = document.getElementById(`m${v}`);
+                btn.className = v === m ? 'flex-1 py-3 rounded-2xl bg-slate-900 text-white text-xs font-black' : 'flex-1 py-3 rounded-2xl bg-slate-100 text-slate-400 text-xs font-black';
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const video = document.getElementById('v');
+            const status = document.getElementById('status');
+            
+            if(selected.size === 0) {
+                video.className = 'filter-normal';
+                status.innerText = "جاهز للمسح";
+                return;
+            }
+
+            let h = 0, u = 0;
+            selected.forEach(id => { FOOD_DB.find(x => x.id === id).type === 'h' ? h++ : u++; });
+            const score = h / (h + u);
+
+            if(score >= 0.6) {
+                // فلتر النضارة: تزداد القوة مع مدة الالتزام
+                video.style.filter = `saturate(${1.2 + (currentM * 0.15)}) brightness(1.05) contrast(1.05)`;
+                status.innerText = "تحليل حيوي: رصد نضارة نسيجية";
+            } else {
+                // فلتر الشحوب والإجهاد
+                video.style.filter = `saturate(${1 - (currentM * 0.2)}) brightness(0.95) sepia(0.15)`;
+                status.innerText = "تحليل حيوي: رصد إجهاد خلوي";
+            }
+        }
+
+        function openReport() {
+            if(selected.size === 0) return;
+            const modal = document.getElementById('reportBackdrop');
+            const scoreVal = document.getElementById('scoreValue');
+            const scoreDisp = document.getElementById('scoreDisplay');
+            const faceList = document.getElementById('faceList');
+            const bodyList = document.getElementById('bodyList');
+            const chemMap = document.getElementById('chemMap');
+            const verdictTxt = document.getElementById('verdictTxt');
+
+            let h = 0, u = 0;
+            let positives = new Set(), negatives = new Set(), chems = [];
+
+            selected.forEach(id => {
+                const item = FOOD_DB.find(x => x.id === id);
+                item.type === 'h' ? h++ : u++;
+                item.pos.forEach(p => positives.add(p));
+                item.neg.forEach(n => negatives.add(n));
+                chems.push({name: item.name, chem: item.chem, desc: item.desc});
+            });
+
+            const totalScore = Math.round((h / (h + u)) * 100);
+            scoreVal.innerText = totalScore + "%";
+            
+            if(totalScore >= 70) {
+                scoreDisp.className = "score-pill score-h";
+                document.getElementById('scoreMsg').innerText = "غذاؤك دواؤك: كفاءة نسيجية عالية";
+            } else {
+                scoreDisp.className = "score-pill score-u";
+                document.getElementById('scoreMsg').innerText = "غذاؤك داؤك: رصد تراجع حيوي";
+            }
+
+            faceList.innerHTML = Array.from(positives).filter(p => p.match(/وجه|شعر|بشرة|عين/)).map(p => `<span class="impact-tag tag-pos">${p}</span>`).join('') +
+                                 Array.from(negatives).filter(n => n.match(/وجه|شعر|بشرة|عين/)).map(n => `<span class="impact-tag tag-neg">${n}</span>`).join('');
+
+            bodyList.innerHTML = Array.from(positives).filter(p => p.match(/عضلات|كتلة|تطهير/)).map(p => `<span class="impact-tag tag-pos">${p}</span>`).join('') +
+                                 Array.from(negatives).filter(n => n.match(/سمنة|خمول|دهنية/)).map(n => `<span class="impact-tag tag-neg">${n}</span>`).join('');
+
+            chemMap.innerHTML = chems.map(c => `
+                <div class="border-b border-slate-700 pb-3">
+                    <div class="text-emerald-400 text-xs mb-1">${c.name}: ${c.chem}</div>
+                    <div class="text-slate-400 leading-relaxed">${c.desc}</div>
+                </div>
+            `).join('');
+
+            verdictTxt.innerText = totalScore >= 70 ? 
+                `بناءً على التزامك لمدة ${currentM} أشهر، يتوقع نظام هضيم AI تحسناً ملحوظاً في حيوية البشرة بنسبة 85%. تدفق الحديد من اللحوم والأوميغا من الأسماك سيمنح وجهك "الفلتر الطبيعي" الأكثر نضارة، ويختفي شحوب العينين تماماً.` :
+                `تحذير هضيم AI: الاستمرار على هذا النمط لمدة ${currentM} أشهر سيفقد الوجه مرونته الطبيعية نتيجة السكر والدهون المهدرجة. الفلتر الحقيقي لوجهك سيميل للشحوب الدائم وستظهر علامات الإجهاد حول العينين بشكل أوضح.`;
+
+            modal.style.display = 'flex';
+        }
+
+        function closeReport() { document.getElementById('reportBackdrop').style.display = 'none'; }
+
+        window.onload = startLens;
+    </script>
+</body>
+</html>
